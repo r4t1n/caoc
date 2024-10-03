@@ -1,8 +1,10 @@
 #include <curl/curl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 const int SESSION_COOKIE_SIZE = 129;
+const int URL_SIZE = 43;
 
 size_t got_data(char *buffer, size_t itemsize, size_t nitems, void *fptr) {
     size_t written = fwrite(buffer, itemsize, nitems, fptr);
@@ -52,12 +54,29 @@ int write_input(CURL *curl, char *url, char *cookie) {
     return 0;
 }
 
-int main() {
+int main(int argc, char **argv) {
     CURL *curl = curl_easy_init();
 
     if (!curl) {
         fprintf(stderr, "Error: curl init failed\n");
         return EXIT_FAILURE;
+    }
+
+    int opt;
+    int day = 0;
+    int year = 0;
+
+    while ((opt = getopt(argc, argv, "d:y:")) != -1) {
+        switch (opt) {
+            case 'd':
+                day = atoi(optarg);
+                break;
+            case 'y':
+                year = atoi(optarg);
+                break;
+            default:
+                break;
+        }
     }
 
     char cookie[SESSION_COOKIE_SIZE];
@@ -67,11 +86,14 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    char url[URL_SIZE];
+    snprintf(url, sizeof(url), "https://adventofcode.com/%d/day/%d/input", year, day);
+
     // Format session cookie to have a name, equal sign and value
     char formatted_cookie[SESSION_COOKIE_SIZE + 9];
     snprintf(formatted_cookie, sizeof(formatted_cookie), "session=%s", cookie);
 
-    res = write_input(curl, "https://adventofcode.com/2015/day/1/input", formatted_cookie);
+    res = write_input(curl, url, formatted_cookie);
     if (res != 0) {
         fprintf(stderr, "Error: failed to write input\n");
         return EXIT_FAILURE;
