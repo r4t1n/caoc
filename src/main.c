@@ -8,7 +8,7 @@
 #include "net/curl.h"
 #include "util/args.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
     Args args;
     parse_args(argc, argv, &args);
 
