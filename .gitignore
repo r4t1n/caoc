@@ -1,8 +1,7 @@
 # Binary
 caoc
 
-# Session cookie
-session
-
-# Input
 input
+
+# macOS shenanigans
+.DS_STORE
