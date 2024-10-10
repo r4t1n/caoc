@@ -1,10 +1,12 @@
 CC = clang
-CFLAGS = -lcurl
-SRC = src/main.c
-TARGET = caoc
+CFLAGS = -O3 -Wall -Wextra -Wpedantic
+CFLAGS += -lcurl
+
+SRC = $(wildcard src/*.c src/**/*.c)
+BIN = caoc
 
 all:
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
+	$(CC) $(CFLAGS) -o $(BIN) $(SRC)
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(BIN)
