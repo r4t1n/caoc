@@ -11,13 +11,15 @@
 int main(int argc, char *argv[]) {
     Args args;
     parse_args(argc, argv, &args);
+    printf("Getting input for %i/%i", args.year, args.day);
 
-    CURL *curl = curl_easy_init();
-
-    if (!curl) {
-        fprintf(stderr, "Error initializing curl: curl init failed\n");
-        return EXIT_FAILURE;
+    if (cached_input_exists(args.year, args.day)) {
+        printf("Copying cached input...\n");
+        copy_from_cache(args.year, args.day, "input");
+        return EXIT_SUCCESS;
     }
+
+    CURL *curl = init_curl();
 
     char cookie_buffer[SESSION_COOKIE_SIZE];
     int res = read_session_cookie(cookie_buffer);
@@ -43,6 +45,8 @@ int main(int argc, char *argv[]) {
         }
         return EXIT_FAILURE;
     }
+
+    res = copy_to_cache(args.year, args.day, filename);
 
     return EXIT_SUCCESS;
 }

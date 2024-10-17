@@ -1,5 +1,17 @@
 #include <curl/curl.h>
 #include <errno.h>
+#include <stdlib.h>
+
+CURL *init_curl(void) {
+    CURL *curl = curl_easy_init();
+
+    if (!curl) {
+        fprintf(stderr, "Error initializing curl: curl init failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return curl;
+}
 
 size_t got_data(char *buffer, size_t itemsize, size_t nitems, void *fptr) {
     size_t written = fwrite(buffer, itemsize, nitems, fptr);
