@@ -2,6 +2,7 @@
 #define CURL_H
 
 #define URL_SIZE 43
+#define USER_AGENT "github.com/r4t1n/caoc by ratin"
 
 #include <curl/curl.h>
 #include <stdlib.h>

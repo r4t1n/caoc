@@ -83,7 +83,7 @@ int read_file_to_buffer(const char *filename, char *buffer, size_t buffer_size) 
     return 0;
 }
 
-void read_session_cookie(char *buffer) {
+void read_session_cookie(char *cookie) {
     char filename[PATH_MAX];
     const char *home_dir = getenv("HOME");
 
@@ -94,5 +94,7 @@ void read_session_cookie(char *buffer) {
 
     snprintf(filename, PATH_MAX, "%s/.config/adventofcode.session", home_dir);
 
-    read_file_to_buffer(filename, buffer, SESSION_COOKIE_SIZE);
+    char cookie_buffer[SESSION_COOKIE_VALUE_SIZE];
+    read_file_to_buffer(filename, cookie_buffer, SESSION_COOKIE_VALUE_SIZE);
+    snprintf(cookie, SESSION_COOKIE_SIZE, "session=%s", cookie_buffer);
 }

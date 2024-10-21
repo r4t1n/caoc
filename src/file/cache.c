@@ -18,7 +18,9 @@ char* get_cache_path(void) {
     }
 
     snprintf(cache_path, PATH_MAX, "%s/.cache/caoc", home_dir);
-    mkdir_recursive(cache_path);
+    if (!path_exists(cache_path)) {
+        mkdir_recursive(cache_path);
+    }
 
     return cache_path;
 }

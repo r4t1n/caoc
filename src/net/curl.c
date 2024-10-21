@@ -7,13 +7,11 @@
 
 CURL *init_curl(void) {
     CURL *curl = curl_easy_init();
-
     if (!curl) {
         fprintf(stderr, "Error: curl init failed\n");
         exit(EXIT_FAILURE);
     }
 
-    printf("initialized curl\n");
     return curl;
 }
 
@@ -32,11 +30,9 @@ int curl_to_file(CURL *curl, char *url, char *cookie, const char *filename) {
         exit(EXIT_FAILURE);
     }
 
-    const char *user_agent = "github.com/r4t1n/caoc by ratin";
-
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_COOKIE, cookie);
-    curl_easy_setopt(curl, CURLOPT_USERAGENT, user_agent);
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, USER_AGENT);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, got_data);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, fptr);
 
