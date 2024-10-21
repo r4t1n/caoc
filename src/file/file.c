@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <sys/stat.h>
 
 #include "file.h"
@@ -16,11 +17,10 @@ int mkdir_recursive(const char *path) {
 
     snprintf(tmp, sizeof(tmp), "%s", path);
 
-    // Walk through the path and create directories
     for (p = tmp + 1; *p; p++) {
         if (*p == '/') {
             *p = '\0';
-            mkdir(tmp, S_IRWXU);  // Create intermediate directories
+            mkdir(tmp, S_IRWXU);
             *p = '/';
         }
     }
@@ -83,21 +83,16 @@ int read_file_to_buffer(const char *filename, char *buffer, size_t buffer_size) 
     return 0;
 }
 
-int read_session_cookie(char *buffer) {
+void read_session_cookie(char *buffer) {
     char filename[PATH_MAX];
     const char *home_dir = getenv("HOME");
 
     if (home_dir == NULL) {
-        return errno;
+        perror("Failed to get HOME environment variable");
+        exit(EXIT_FAILURE);
     }
 
     snprintf(filename, PATH_MAX, "%s/.config/adventofcode.session", home_dir);
 
-    int res = read_file_to_buffer(filename, buffer, SESSION_COOKIE_SIZE);
-    if (res != 0) {
-        return res;
-    }
-
-    return 0;
+    read_file_to_buffer(filename, buffer, SESSION_COOKIE_SIZE);
 }
-

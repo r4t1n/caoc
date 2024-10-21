@@ -3,10 +3,12 @@
 
 char* get_cache_path(void);
 
-int cached_input_exists(int year, int day);
+char* get_cache_dir_path(int year, int day);
 
-int copy_from_cache(int year, int day, const char *dest);
+char* get_cache_input_path(int year, int day);
 
-int copy_to_cache(int year, int day, const char *src);
+void copy_from_cache(int year, int day, const char *dest);
+
+void copy_to_cache(int year, int day, const char *src);
 
 #endif

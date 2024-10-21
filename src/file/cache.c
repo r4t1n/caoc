@@ -1,89 +1,56 @@
-#include "cache.h"
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "cache.h"
 #include "file.h"
 
 char* get_cache_path(void) {
     const char *home_dir = getenv("HOME");
     if (home_dir == NULL) {
         perror("Failed to get HOME environment variable");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
 
     char *cache_path = malloc(PATH_MAX);
     if (cache_path == NULL) {
         perror("Failed to allocate memory for cache path");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
 
     snprintf(cache_path, PATH_MAX, "%s/.cache/caoc", home_dir);
-
-    if (!path_exists(cache_path)) {
-        int res = mkdir_recursive(cache_path);
-        if (res != 0) {
-            return NULL;
-        }
-    }
+    mkdir_recursive(cache_path);
 
     return cache_path;
 }
 
-int cached_input_exists(int year, int day) {
+char* get_cache_dir_path(int year, int day) {
     char *cache_path = get_cache_path();
-    if (cache_path == NULL) {
-        free(cache_path);
-        return -1;
-    }
 
-    char cached_input_path[PATH_MAX];
-    snprintf(cached_input_path, sizeof(cached_input_path), "%s/%i/%i/input", cache_path, year, day);
+    char *cached_input_path = malloc(PATH_MAX);
+    snprintf(cached_input_path, PATH_MAX, "%s/%i/%i", cache_path, year, day);
     free(cache_path);
 
-    return (path_exists(cached_input_path));
+    return cached_input_path;
 }
 
-int copy_from_cache(int year, int day, const char *dest) {
-    char *cache_path = get_cache_path();
-    if (cache_path == NULL) {
-        free(cache_path);
-        return -1;
-    }
-
-    char src[PATH_MAX];
-    snprintf(src, sizeof(src), "%s/%i/%i/input", cache_path, year, day);
-    free(cache_path);
-
-    int res = copy_file(src, dest);
-    if (res != 0) {
-        return res;
-    }
-
-    return 0;
+char* get_cache_input_path(int year, int day) {
+    char *cache_dir = get_cache_dir_path(year, day);
+    snprintf(cache_dir, PATH_MAX, "%s/input", cache_dir);
+    return cache_dir;
 }
 
-int copy_to_cache(int year, int day, const char *src) {
-    char *cache_path = get_cache_path();
-    if (cache_path == NULL) {
-        free(cache_path);
-        return -1;
-    }
+void copy_from_cache(int year, int day, const char *dest) {
+    char *src = get_cache_input_path(year, day);
+    copy_file(src, dest);
+    free(src);
+}
 
-    char dest[PATH_MAX];
-    snprintf(dest, sizeof(dest), "%s/%i/%i", cache_path, year, day);
-    free(cache_path);
+void copy_to_cache(int year, int day, const char *src) {
+    char *cache_dir = get_cache_dir_path(year, day);
+    mkdir_recursive(cache_dir);
+    free(cache_dir);
 
-    int res = mkdir_recursive(dest);
-    if (res != 0) {
-        return res;
-    }
-
-    snprintf(dest, sizeof(dest), "%s/input", dest);
-
-    res = copy_file(src, dest);
-    if (res != 0) {
-        return res;
-    }
-
-    return 0;
+    char *dest = get_cache_input_path(year, day);
+    copy_file(src, dest);
+    free(dest);
 }
